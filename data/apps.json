@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "name": "Aplikasi Akademik",
+    "url": "http://localhost:8000/auth/redirect",
+    "icon": "fa-graduation-cap",
+    "requiredRoles": [
+      "users"
+    ]
+  },
+  {
+    "id": "1755186949462",
+    "name": "Utilitas",
+    "url": "https://utilitas.sman1balongpanggang.sch.id",
+    "icon": "fa-graduation-cap",
+    "requiredRoles": [
+      "users"
+    ]
+  }
+]

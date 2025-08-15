@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-gray-50">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manajemen Aplikasi</title>
+    <!-- ▼▼▼ PERBAIKAN URL ▼▼▼ -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <style>
+        /* Sembunyikan header tabel di layar kecil */
+        @media (max-width: 768px) {
+            .responsive-table thead {
+                display: none;
+            }
+
+            .responsive-table tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #ddd;
+                border-radius: 0.5rem;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .responsive-table td {
+                display: block;
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+                border-bottom: 1px solid #eee;
+            }
+
+            .responsive-table td:last-child {
+                border-bottom: 0;
+            }
+
+            /* Tambahkan label data dari header tabel */
+            .responsive-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0.75rem;
+                width: 45%;
+                padding-right: 0.75rem;
+                text-align: left;
+                font-weight: bold;
+            }
+        }
+    </style>
+</head>
+
+<body class="h-full">
+    <div class="min-h-full">
+        <%- include('partials/header', { userName, isAdmin }) %>
+
+            <header class="bg-white shadow-sm">
+                <div class="mx-auto max-w-7xl py-4 px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-lg font-semibold leading-6 text-gray-900">Manajemen Aplikasi</h1>
+                </div>
+            </header>
+            <main>
+                <div class="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
+                    <!-- Form Tambah Aplikasi -->
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+                        <h2 class="text-xl font-bold mb-4">Tambah Aplikasi Baru</h2>
+                        <form action="/admin/add" method="POST" class="space-y-4">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700">Nama Aplikasi</label>
+                                <input type="text" name="name" id="name" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="url" class="block text-sm font-medium text-gray-700">URL Login SSO</label>
+                                <input type="url" name="url" id="url" required
+                                    placeholder="Contoh: http://localhost:8000/auth/redirect"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="icon" class="block text-sm font-medium text-gray-700">Kelas Ikon Font
+                                    Awesome</label>
+                                <input type="text" name="icon" id="icon" placeholder="Contoh: fa-graduation-cap"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="requiredRoles" class="block text-sm font-medium text-gray-700">Peran yang
+                                    Dibutuhkan (pisahkan dengan koma)</label>
+                                <input type="text" name="requiredRoles" id="requiredRoles" required
+                                    placeholder="Contoh: user, admin"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            </div>
+                            <button type="submit"
+                                class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700">Tambah
+                                Aplikasi</button>
+                        </form>
+                    </div>
+
+                    <!-- Tabel Daftar Aplikasi -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-xl font-bold mb-4">Daftar Aplikasi Saat Ini</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 responsive-table">
+                                <thead>
+                                    <tr>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Nama</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            URL</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Peran</th>
+                                        <th
+                                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200 md:divide-y-0">
+                                    <% apps.forEach(app=> { %>
+                                        <tr>
+                                            <td data-label="Nama"
+                                                class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 md:text-left">
+                                                <%= app.name %>
+                                            </td>
+                                            <td data-label="URL"
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 md:text-left">
+                                                <%= app.url %>
+                                            </td>
+                                            <td data-label="Peran"
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 md:text-left">
+                                                <%= app.requiredRoles.join(', ') %></td>
+                                        <td data-label="Aksi" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <button type="button" class="text-indigo-600 hover:text-indigo-900 edit-btn"
+                                                data-id="<%= app.id %>"
+                                                data-name="<%= app.name %>"
+                                                data-url="<%= app.url %>"
+                                                data-icon="<%= app.icon %>"
+                                                data-roles="<%= app.requiredRoles.join(' , ') %>">
+                                                Edit
+                                            </button>
+                                            <form action="/admin/delete/<%= app.id %>" method="POST" class="inline ml-4" onsubmit="return confirm(`Anda yakin ingin menghapus aplikasi ini?`);">
+                                                    <button type="submit"
+                                                        class="text-red-600 hover:text-red-900">Hapus</button>
+                                                    </form>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+    </div>
+
+    <!-- MODAL UNTUK EDIT APLIKASI -->
+    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Edit Aplikasi</h3>
+                <div class="mt-2 px-7 py-3">
+                    <form id="editForm" action="" method="POST" class="space-y-4 text-left">
+                        <div>
+                            <label for="editName" class="block text-sm font-medium text-gray-700">Nama Aplikasi</label>
+                            <input type="text" name="name" id="editName" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="editUrl" class="block text-sm font-medium text-gray-700">URL Login SSO</label>
+                            <input type="url" name="url" id="editUrl" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="editIcon" class="block text-sm font-medium text-gray-700">Kelas Ikon Font
+                                Awesome</label>
+                            <input type="text" name="icon" id="editIcon"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="editRoles" class="block text-sm font-medium text-gray-700">Peran yang Dibutuhkan
+                                (pisahkan dengan koma)</label>
+                            <input type="text" name="requiredRoles" id="editRoles" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        </div>
+                    </form>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="saveChangesBtn"
+                        class="px-4 py-2 bg-blue-600 text-white text-base font-medium rounded-md w-auto shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        Simpan Perubahan
+                    </button>
+                    <button id="closeModalBtn"
+                        class="ml-2 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-auto shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const editModal = document.getElementById(`editModal`); const
+            closeModalBtn = document.getElementById(`closeModalBtn`); const
+                editForm = document.getElementById(`editForm`); const
+                    saveChangesBtn = document.getElementById(`saveChangesBtn`); const
+                        openModal = () =>
+                            editModal.classList.remove(`hidden`);
+        // Fungsi untuk menyembunyikan modal
+        const closeModal = () => editModal.classList.add(`hidden`);
+
+        // Event listener untuk tombol edit di setiap baris tabel
+        document.querySelectorAll(`.edit-btn`).forEach(button => {
+            button.addEventListener(`click`, (e) => {
+                const appData = e.currentTarget.dataset;
+
+                // Isi form di dalam modal dengan data dari tombol yang diklik
+                editForm.querySelector(`#editName`).value = appData.name;
+                editForm.querySelector(`#editUrl`).value = appData.url;
+                editForm.querySelector(`#editIcon`).value = appData.icon;
+                editForm.querySelector(`#editRoles`).value = appData.roles;
+
+                // Atur action form untuk menunjuk ke URL update yang benar
+                editForm.action = `/admin/update/${appData.id}`;
+
+                openModal();
+            });
+        });
+
+        saveChangesBtn.addEventListener(`click`, () => {
+            editForm.submit();
+        });
+
+        closeModalBtn.addEventListener(`click`, closeModal);
+    </script>
+</body>
+
+</html>
